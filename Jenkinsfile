@@ -14,12 +14,12 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh '<COMMAND>'
+        sh 'mvn package'
       }
     }
     stage('Test') {
       steps {
-        sh '<COMMAND>'
+        sh 'mvn test'
       }
     }
     stage('Deploy') {
