@@ -27,15 +27,24 @@ pipeline {
     stage('Build Docker Image') {
       agent any
       steps {
-        sh 'docker image build -t goldrako/myhello Dockerfile'
+        sh 'docker image build -t goldrako/myhello Dockerfile-hello'
       }
     }
+
+    // stage('Build Docker Image') {
+    //   agent any
+    //   steps {
+    //     sh 'docker image build -t myhello .'
+    //   }
+    // }
     // stage('Tag Docker Image') {
     //   agent any
     //   steps {
-    //     sh '<COMMAND>'
+    //     sh 'docker image tag myhello c1t1d0s7/myhello:$BUILD_NUMBER'
+    //     sh 'docker image tag myhello c1t1d0s7/myhello:latest'
     //   }
     // }
+
     stage('Publish Docker Image') {
       agent any
       steps {
@@ -49,7 +58,7 @@ pipeline {
         docker { image 'docker:dind' }
       }
       steps {
-        // sh 'docker -H tcp://172.31.18.13:2375 container run --detach --name myhello -p 80:8080 goldrako/myhelloMAGE>:$BUILD_NUMBER'
+        // sh 'docker -H tcp://172.31.18.13:2375 container run --detach --name myhello -p 80:8080 goldrako/myhello>:$BUILD_NUMBER'
         sh 'docker -H tcp://172.31.18.13:2375 container run --detach --name myhello -p 80:8080 goldrako/myhello:latest'
       }
     }
