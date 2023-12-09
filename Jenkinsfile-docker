@@ -1,6 +1,6 @@
 pipeline {
   agent none
-
+  
   stages {
     stage('Checkout') {
       agent any
@@ -27,30 +27,22 @@ pipeline {
     stage('Build Docker Image') {
       agent any
       steps {
-        sh 'docker image build -t myhello Dockerfile-hello'
+        sh "docker image build -t myhello ."
       }
     }
-
-    // stage('Build Docker Image') {
-    //   agent any
-    //   steps {
-    //     sh 'docker image build -t myhello .'
-    //   }
-    // }
     stage('Tag Docker Image') {
       agent any
       steps {
-        sh 'docker image tag myhello goldrako/myhello:$BUILD_NUMBER'
-        sh 'docker image tag myhello goldrako/myhello:latest'
+        sh "docker image tag myhello goldrako/myhello:$BUILD_NUMBER"
+        sh "docker image tag myhello goldrako/myhello:latest"
       }
     }
-
     stage('Publish Docker Image') {
       agent any
       steps {
-        withDockerRegistry(credentialsId: 'docker-hub-token2', url: 'https://index.docker.io/v1/') {
+        withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
           sh "docker image push goldrako/myhello:$BUILD_NUMBER"
-          sh "docker image push goldrako/myhello:latest"		  
+          sh "docker image push goldrako/myhello:latest"
         }
       }
     }
@@ -59,8 +51,8 @@ pipeline {
         docker { image 'docker:dind' }
       }
       steps {
-        // sh 'docker -H tcp://172.31.18.13:2375 container run --detach --name myhello -p 80:8080 goldrako/myhello>:$BUILD_NUMBER'
-        sh 'docker -H tcp://172.31.27.46:2375 container run --detach --name myhello -p 80:8080 goldrako/myhello:$BUILD_NUMBER'
+        // sh 'docker -H tcp://<DOCKER_HOST_PRIVATE_IP>:2375 container run --detach --name <CONTAINER_NAME> -p 80:8080 <IMAGE>:$BUILD_NUMBER'
+        sh "docker -H tcp://172.31.23.73:2375 container run --detach --name myhello -p 80:8080 goldrako/myhello:$BUILD_NUMBER"
       }
     }
   }
